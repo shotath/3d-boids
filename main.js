@@ -4,6 +4,8 @@
 	var BOID_HEIGHT = 7;
 	var MIN_DISTANCE = (BOID_WIDTH + BOID_HEIGHT)*2;
 	var INITIAL_BOIDS_LENGTH = 10;
+	var PREFIX = getPrefix();
+	var TRANSFORM = PREFIX === '' ? 'transform' : PREFIX + 'Transform';
 
 	var currentBoidsLength = 0;
 	var boids = [];
@@ -19,6 +21,24 @@
 	var startTime_ms, previousTime_ms;
 	var fpsCollections = [];
 
+	function getPrefix() {
+		var userAgent = window.navigator.userAgent.toLowerCase();
+		var prefix;
+		if ( userAgent.indexOf('msie') != -1 ) {
+			prefix = 'ms';
+		}
+		else if ( userAgent.indexOf('chrome') != -1 || userAgent.indexOf('safari') != -1 || userAgent.indexOf('opera') != -1 ) {
+			prefix = 'webkit';
+		}
+		else if ( userAgent.indexOf('gecko') != -1 ) {
+			prefix = 'Moz';
+		}
+		else {
+			prefix = '';
+		}
+		return prefix;
+	}
+
 	function setupWorld( isUpdate ) {
 		worldWidth = document.documentElement.clientWidth;
 		worldHeight = document.documentElement.clientHeight;
@@ -26,14 +46,14 @@
 
 		world.style.width = worldWidth + 'px';
 		world.style.height = worldHeight + 'px';
-		wallBottom.style.transform = 'rotateX(-90deg) translateZ(' + worldHeight + 'px)';
-		wallOpposite.style.transform = 'translateZ(-' + worldDipth + 'px)';
+		wallBottom.style[TRANSFORM] = 'rotateX(-90deg) translateZ(' + worldHeight + 'px)';
+		wallOpposite.style[TRANSFORM] = 'translateZ(-' + worldDipth + 'px)';
 		
 		if ( isUpdate ) return;
 
 		world.style.position = 'relative';
-		world.style.webkitTransformStyle = 'preserve-3d';
-		world.style.webkitTransform = 'perspective(800px)';
+		world.style[TRANSFORM + 'Style'] = 'preserve-3d';
+		world.style[TRANSFORM] = 'perspective(800px)';
 	}
 
 	function addBoids( num ) {
@@ -46,7 +66,7 @@
 
 			boid = document.createElement( 'boid' );
 			boid.className = 'boid';
-			boid.style.webkitTransform = 'translate3d(' + posX + 'px, ' + posY + 'px, ' + posZ + 'px)';
+			boid.style[TRANSFORM] = 'translate3d(' + posX + 'px, ' + posY + 'px, ' + posZ + 'px)';
 			boid.style.width = BOID_WIDTH + 'px';
 			boid.style.height = BOID_HEIGHT + 'px';
 			boid.style.backgroundColor = colors[Math.floor( Math.random() * colors.length )];
@@ -205,7 +225,7 @@
 
 			// apply params to boid
 			// -------------------------
-			boid.target.style.webkitTransform = 'translate3d(' + boids[i].x + 'px, ' + boids[i].y + 'px, ' + boids[i].z + 'px)';
+			boid.target.style[TRANSFORM] = 'translate3d(' + boids[i].x + 'px, ' + boids[i].y + 'px, ' + boids[i].z + 'px)';
 			boid.target.style.opacity = 1.2 + ( boids[i].z / worldDipth );
 		}
 		window.requestAnimationFrame( boidLoop );
